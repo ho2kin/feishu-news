@@ -4,13 +4,16 @@
 #   cp config.example.yaml config.yaml
 # ============================================================
 
+# 代码自动登录账号（token 过期时 monitor 会自动用它重登）
+account:
+  username: ""
+  password: ""
+  # 验证码识别错误时的最大重试次数
+  captcha_retry: 5
+
 monitor:
-  # 派单中心页面（登录态校验 + 接口调用上下文）
+  # 派单中心页面地址（作为接口请求的 Referer）
   url: https://ltc.chintanneng.com/audit-center/quality-audit/dispatch-center
-  # 打开后被重定向到含此关键字的地址 => 登录过期
-  login_url_keyword: /login
-  # 页面加载后等待秒数
-  wait_seconds: 8
 
   # 数据接口（已实测锁定）
   api_url: https://api-gushen.chintanneng.com/ltc/station/ltcQualityAuditWorkOrderController/find-pagination
@@ -48,10 +51,5 @@ feishu:
   webhook: "https://open.feishu.cn/open-apis/bot/v2/hook/你的webhook-token"
   # 若机器人开启了签名校验，填密钥；没开留空
   secret: ""
-  # 登录过期提醒冷却（小时），避免每15分钟重复轰炸
+  # 自动登录失败提醒冷却（小时），避免每个周期重复轰炸
   expired_alert_cooldown_hours: 12
-
-# 专用浏览器（独立配置目录，与日常浏览器互不影响）
-browser:
-  debug_port: 9222
-  chrome_path: ""
