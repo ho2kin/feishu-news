@@ -1,0 +1,57 @@
+# ============================================================
+# 派单中心新工单监控 -> 飞书推送 配置模板
+# 使用方法：复制本文件为 config.yaml，再填入你的真实凭据
+#   cp config.example.yaml config.yaml
+# ============================================================
+
+monitor:
+  # 派单中心页面（登录态校验 + 接口调用上下文）
+  url: https://ltc.chintanneng.com/audit-center/quality-audit/dispatch-center
+  # 打开后被重定向到含此关键字的地址 => 登录过期
+  login_url_keyword: /login
+  # 页面加载后等待秒数
+  wait_seconds: 8
+
+  # 数据接口（已实测锁定）
+  api_url: https://api-gushen.chintanneng.com/ltc/station/ltcQualityAuditWorkOrderController/find-pagination
+  # 查询参数：dispatchStatus=0 待派单；pageType=9 派单中心视图；projectProvinceCode=41 河南省
+  query_params:
+    dispatchStatus: 0
+    pageType: "9"
+    projectProvinceCode: "41"
+  # 分页：每次拉取条数 / 最多翻页数（防失控）
+  page_rows: 100
+  max_pages: 5
+  # 本地过滤：只保留 已审次数=0 的工单；留空则不过滤
+  filter_audit_count: 0
+  # 本地排序字段与方向（按创建时间从旧到新，与网页列表显示顺序一致）
+  sort_field: creationDate
+  sort_order: asc
+
+  # ---- 判定"新数据"的关键字段 ----
+  # 默认用工单 id 判定"新增工单"。若还想监控状态流转，可加字段如 [id, auditStatus]
+  item_key_fields: [id]
+  # ---- 飞书通知摘要里展示的字段 ----
+  summary_fields: [agentName, stationNo, auditNode]
+  # 审核节点代码 -> 名称 映射（来自前端 auditNodeLabelMap）
+  audit_node_labels:
+    "0": 建档
+    "1": 并网
+    "2": 完工
+    "3": 变更
+  # 通知里最多列出的明细条数
+  notify_max_lines: 15
+
+# 飞书群自定义机器人
+feishu:
+  # 在飞书群里添加"自定义机器人"后，把 webhook 地址填到这里
+  webhook: "https://open.feishu.cn/open-apis/bot/v2/hook/你的webhook-token"
+  # 若机器人开启了签名校验，填密钥；没开留空
+  secret: ""
+  # 登录过期提醒冷却（小时），避免每15分钟重复轰炸
+  expired_alert_cooldown_hours: 12
+
+# 专用浏览器（独立配置目录，与日常浏览器互不影响）
+browser:
+  debug_port: 9222
+  chrome_path: ""

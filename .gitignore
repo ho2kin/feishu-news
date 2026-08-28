@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+
+# 登录态、浏览器配置（含 cookie，严禁提交）
+state/
+
+# 运行日志
+logs/
+
+# 真实配置（含飞书 webhook 凭据），仓库里只保留脱敏模板 config.example.yaml
+config.yaml
+
+# 本地工具配置
+.zcode/
